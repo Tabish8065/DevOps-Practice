@@ -1,0 +1,18 @@
+package com.blogging.Service;
+
+import java.util.List;
+
+import com.blogging.Model.CommentModel;
+import com.blogging.Model.PostModel;
+
+public interface PostService {
+    
+    public String createPost(PostModel post);
+    public PostModel readPost(int id);
+    public List<PostModel> readAllPost();
+    public void updatePost(PostModel post);
+    public PostModel deletePost(int id);
+    public void addComment(CommentModel comment);
+	PostModel getPost(int id);
+
+}

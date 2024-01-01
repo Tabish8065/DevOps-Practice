@@ -1,0 +1,16 @@
+package com.blogging.Service;
+
+import java.util.List;
+
+import com.blogging.DTO.CommentDTO;
+import com.blogging.Model.CommentModel;
+
+public interface CommentService {
+    
+    public CommentModel createComment(CommentModel comment);
+    public CommentModel readComment(int id);
+    public List<CommentModel> readCommentByPostId(int postId);
+    public CommentModel updateComment(CommentModel post);
+    public CommentModel deleteComment(int id);
+
+}

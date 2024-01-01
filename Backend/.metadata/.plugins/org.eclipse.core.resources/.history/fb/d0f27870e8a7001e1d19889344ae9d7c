@@ -1,0 +1,54 @@
+package com.blogging.Controller;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.blogging.DTO.CommentDTO;
+import com.blogging.Model.CommentModel;
+import com.blogging.Service.CommentService;
+
+@RequestMapping("post/{postId}/comment/")
+@RestController
+public class CommentManagementController {
+
+    private CommentService service;
+
+    public CommentManagementController(CommentService service){
+        this.service = service;
+    }
+
+    @PostMapping("create")
+    public CommentModel createComment(@RequestBody CommentModel comment) {
+
+        return service.createComment(comment);
+    }
+
+    @GetMapping("{id}")
+    public CommentModel readComment(@PathVariable int id) {
+        return service.readComment(id);
+        // return "Post id" + postId +", CommentId "+id;
+    }
+
+    @GetMapping("")
+    public List<CommentModel> readCommentByPost(@PathVariable int postId) {
+        return service.readCommentByPostId(postId);
+    }
+
+    @PutMapping("")
+    public CommentModel updateComment(@RequestBody CommentModel comment) {
+        return service.updateComment(comment);
+    }
+
+    @DeleteMapping("{id}")
+    public CommentModel deleteComment(@PathVariable int id) {
+        return service.deleteComment(id);
+    }
+}

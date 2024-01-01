@@ -1,0 +1,60 @@
+package com.blogging.Service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.blogging.DTO.CommentDTO;
+import com.blogging.Model.CommentModel;
+import com.blogging.Repository.CommentRepo;
+
+@Service
+public class CommentServiceImpl implements CommentService {
+
+    private CommentRepo repo;
+    private PostService postService;
+
+    public CommentServiceImpl(CommentRepo repo, PostService postService){
+        this.repo = repo;
+        this.postService = postService;
+    }
+
+    @Override
+    public String createComment(CommentDTO commentDto) {
+
+    	CommentModel comment = new CommentModel();
+    	comment.setName(commentDto.getName());
+    	comment.setBody(commentDto.getBody());
+    	comment.setEmail(commentDto.getEmail());
+    	comment.setPostId(postService.getPost(commentDto.getPostId()));
+    	
+    	repo.save(comment);
+        return "Commented successfully";
+    }
+
+    @Override
+    public CommentModel readComment(int id) {
+        return null;
+    }
+
+    @Override
+    public List<CommentModel> readCommentByPostId(int postId) {
+        // List<CommentModel> comments = postService.readPost(postId)
+        //                                 .getComments();
+        // return comments;
+        return null;
+    }
+
+    @Override
+    public void updateComment(CommentDTO comment) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateComment'");
+    }
+
+    @Override
+    public CommentModel deleteComment(int id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteComment'");
+    }
+    
+}

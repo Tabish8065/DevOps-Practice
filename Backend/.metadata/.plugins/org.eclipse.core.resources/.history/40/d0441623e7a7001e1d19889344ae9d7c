@@ -1,0 +1,54 @@
+package com.blogging.Service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.blogging.DTO.CommentDTO;
+import com.blogging.Model.CommentModel;
+import com.blogging.Repository.CommentRepo;
+
+@Service
+public class CommentServiceImpl implements CommentService {
+
+    private CommentRepo repo;
+
+    public CommentServiceImpl(CommentRepo repo){
+        this.repo = repo;
+    }
+
+	@Override
+	public CommentModel createComment(CommentModel comment) {
+		// TODO Auto-generated method stub
+		return repo.save(comment);
+	}
+
+	@Override
+	public CommentModel readComment(int id) {
+		// TODO Auto-generated method stub
+		return repo.findById(id-1).orElse(null);
+	}
+
+	@Override
+	public List<CommentModel> readCommentByPostId(int postId) {
+		// TODO Auto-generated method stub
+		return repo.findAll();
+	}
+
+	@Override
+	public CommentModel updateComment(CommentModel post) {
+		// TODO Auto-generated method stub
+		return repo.save(post);
+	}
+
+	@Override
+	public CommentModel deleteComment(int id) {
+		// TODO Auto-generated method stub
+		CommentModel temp = readComment(id);
+		repo.deleteById(id-1);
+		return temp;
+	}
+
+   
+    
+}

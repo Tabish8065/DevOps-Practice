@@ -1,0 +1,88 @@
+package com.blogging.Service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.blogging.DTO.PostCommentDTO;
+import com.blogging.DTO.PostDTO;
+import com.blogging.Model.CommentModel;
+import com.blogging.Model.PostModel;
+import com.blogging.Repository.PostRepo;
+
+@Service
+public class PostServiceImpl implements PostService {
+
+    private PostRepo postRepo;
+
+    // @Autowired
+    public PostServiceImpl(PostRepo postRepo){
+        this.postRepo = postRepo;
+    }
+
+    @Override
+    public String createPost(PostModel post) {
+    
+        try{
+            postRepo.save(post);
+        }catch(Exception e){
+            return "Post can't be created";
+        }
+        return "Post has been sucessfully created";
+    }
+
+    @Override
+    public PostDTO readPost(int id) {
+        PostModel post =  postRepo.findById(id-1).orElse(null);
+        return postToPostDto(post);
+    }
+
+    @Override
+    public List<PostDTO> readAllPost() {
+        return postRepo.findAll().stream().map(post -> postToPostDto(post))
+        .toList();
+    }
+
+    @Override
+    public void updatePost(PostModel post) {
+        //postRepo.updatePost(post);
+    }
+
+    @Override
+    public PostDTO deletePost(int id) {
+    	PostDTO post = readPost(id);
+        postRepo.deleteById(id-1);
+        return post;
+    }
+
+    private PostDTO postToPostDto(PostModel post){
+        List<PostCommentDTO> comments = post.getComments().stream()
+                                    .map(comm -> {
+                                        return new PostCommentDTO(
+                                            comm.getName(),
+                                            comm.getBody()
+                                        );
+                                    }).toList();
+        return new PostDTO(
+            post.getId(),
+            post.getTitle(),
+            post.getDescription(),
+            post.getContent(),
+            comments
+        );
+    }
+
+    @Override
+    public void addComment(CommentModel comment){
+        postRepo.findById(comment.getPostId().getId()-1)
+        	.orElse(null)
+            .getComments()
+            .add(comment);
+    }
+    
+    @Override
+    public PostModel getPost(int id) {
+    	return postRepo.findById(id-1).orElse(null);
+    }
+    
+}

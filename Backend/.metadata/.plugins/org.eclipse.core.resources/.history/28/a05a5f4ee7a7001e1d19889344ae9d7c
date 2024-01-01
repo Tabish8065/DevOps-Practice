@@ -1,0 +1,55 @@
+package com.blogging.Service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.blogging.DTO.PostCommentDTO;
+import com.blogging.DTO.PostDTO;
+import com.blogging.Model.CommentModel;
+import com.blogging.Model.PostModel;
+import com.blogging.Repository.PostRepo;
+
+@Service
+public class PostServiceImpl implements PostService {
+
+    private PostRepo postRepo;
+
+    // @Autowired
+    public PostServiceImpl(PostRepo postRepo){
+        this.postRepo = postRepo;
+    }
+
+	@Override
+	public PostModel createPost(PostModel post) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PostModel readPost(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PostModel> readAllPost() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PostModel updatePost(PostModel post) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PostModel deletePost(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    
+    
+}
