@@ -3,14 +3,16 @@ package com.blogging.Service;
 import java.util.List;
 
 import com.blogging.Model.PostModel;
+import com.blogging.dto.PostAPIOutputDto;
 import com.blogging.dto.PostInputAPIDto;
 
 public interface PostService {
     
-    public PostModel createPost(PostInputAPIDto post);
-    public PostModel readPost(int id);
-    public List<PostModel> readAllPost();
-    public PostModel updatePost(PostInputAPIDto post, int id);
-    public PostModel deletePost(int id);
+    public PostAPIOutputDto createPost(PostInputAPIDto post);
+    public PostAPIOutputDto readPost(int id);
+    public PostModel readPostModel(int id);
+    public List<PostAPIOutputDto> readAllPost();
+    public PostAPIOutputDto updatePost(PostInputAPIDto post, int id);
+    public PostAPIOutputDto deletePost(int id);
 
 }

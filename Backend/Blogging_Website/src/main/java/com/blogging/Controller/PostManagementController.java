@@ -2,6 +2,8 @@ package com.blogging.Controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.blogging.Model.PostModel;
 import com.blogging.Service.PostService;
+import com.blogging.dto.PostAPIOutputDto;
 import com.blogging.dto.PostInputAPIDto;
 
 @RestController
@@ -27,30 +30,34 @@ public class PostManagementController {
     }
 
     @PostMapping("create")
-    public PostModel createPost(@RequestBody PostInputAPIDto post) {
+    public ResponseEntity<PostAPIOutputDto> createPost(@RequestBody PostInputAPIDto post) {
     	
-    	return servcie.createPost(post);
+    	return new ResponseEntity<PostAPIOutputDto>(servcie.createPost(post),
+                        HttpStatusCode.valueOf(201));
     }
 
     @GetMapping("getPost/{id}")
-    public PostModel readPost(@PathVariable int id) {
-        return servcie.readPost(id);
+    public ResponseEntity<PostAPIOutputDto> readPost(@PathVariable int id) {
+        return new ResponseEntity<PostAPIOutputDto>(servcie.readPost(id),
+                        HttpStatusCode.valueOf(201));
     }
 
     @GetMapping("getAll")
-    public List<PostModel> readAllPost() {
+    public List<PostAPIOutputDto> readAllPost() {
         return servcie.readAllPost();
     }
 
     @PutMapping("update/{postId}")
-    public PostModel updatePost(@RequestBody PostInputAPIDto post, @PathVariable int postId) {
+    public ResponseEntity<PostAPIOutputDto> updatePost(@RequestBody PostInputAPIDto post, @PathVariable int postId) {
     	
-        return servcie.updatePost(post,postId);
+        return new ResponseEntity<PostAPIOutputDto>(servcie.updatePost(post,postId),
+                        HttpStatusCode.valueOf(201));
     }
 
     @DeleteMapping("delete/{id}")
-    public PostModel deletePost(@PathVariable int id) {
-        return servcie.deletePost(id);
+    public ResponseEntity<PostAPIOutputDto> deletePost(@PathVariable int id) {
+        return new ResponseEntity<PostAPIOutputDto>(servcie.deletePost(id),
+                        HttpStatusCode.valueOf(201));
     }
     
    

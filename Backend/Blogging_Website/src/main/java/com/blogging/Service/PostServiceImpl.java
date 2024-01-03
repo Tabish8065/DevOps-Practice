@@ -1,33 +1,32 @@
 package com.blogging.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.blogging.Model.CommentModel;
 import com.blogging.Model.PostModel;
 import com.blogging.Repository.PostRepo;
+import com.blogging.dto.CommentInputAPIDto;
+import com.blogging.dto.PostAPIOutputDto;
 import com.blogging.dto.PostInputAPIDto;
 
 @Service
 public class PostServiceImpl implements PostService {
 
     private PostRepo repo;
-    
-    @Autowired
     private ModelMapper modelMapper;
 
     // @Autowired
-    public PostServiceImpl(PostRepo repo){
+    public PostServiceImpl(PostRepo repo, ModelMapper modelMapper){
         this.repo = repo;
-        //this.modelMapper = modelMapper;
+        this.modelMapper = modelMapper;
     }
 
 	@Override
-	public PostModel createPost(PostInputAPIDto post) {
+	public PostAPIOutputDto createPost(PostInputAPIDto post) {
 		
 		/**
 		*Mapping the PostInputAPIDto to Post for creation of new Post
@@ -37,23 +36,28 @@ public class PostServiceImpl implements PostService {
 		
 		PostModel postModel = postDTOToPostModel(post);
 		
-		return repo.save(postModel);
+		return postModeltoPostDto(repo.save(postModel));
 	}
 
 	@Override
-	public PostModel readPost(int id) {
-		// TODO Auto-generated method stub
-		return repo.findById(id).orElse(null);
+	public PostAPIOutputDto readPost(int id) {
+		return postModeltoPostDto(repo.findById(id).orElse(null));
 	}
 
 	@Override
-	public List<PostModel> readAllPost() {
-		// TODO Auto-generated method stub
-		return repo.findAll();
+	public PostModel readPostModel(int id){
+		return repo.findById(id).orElse(null).;
+	} 
+
+	@Override
+	public List<PostAPIOutputDto> readAllPost() {
+		return repo.findAll().stream()
+					.map(post -> postModeltoPostDto(post))
+					.collect(Collectors.toList());
 	}
 
 	@Override
-	public PostModel updatePost(PostInputAPIDto post, int id) {
+	public PostAPIOutputDto updatePost(PostInputAPIDto post, int id) {
 		
 		/**
 		 * Post should be mapped with the old post so that
@@ -61,20 +65,19 @@ public class PostServiceImpl implements PostService {
 		 * be fetched from previous value
 		 */
 		
-		PostModel postModel = readPost(id);
+		PostModel postModel = readPostModel(id);
 		if(post.getTitle() != null) postModel.setTitle(post.getTitle()); 
 		if(post.getDescription() != null) postModel.setDescription(post.getDescription()); 
 		if(post.getContent() != null) postModel.setContent(post.getContent()); 
 		
-		return repo.save(postModel);
+		return postModeltoPostDto(repo.save(postModel));
 	}
 
 	@Override
-	public PostModel deletePost(int id) {
-		// TODO Auto-generated method stub
-		PostModel post = readPost(id);
+	public PostAPIOutputDto deletePost(int id) {
+		PostModel post = readPostModel(id);
 		repo.deleteById(id);
-		return post;
+		return postModeltoPostDto(post);
 	}
 
 	 private PostModel postDTOToPostModel(PostInputAPIDto postDto) {
@@ -90,4 +93,26 @@ public class PostServiceImpl implements PostService {
 	    	return post;
 	    }
     
+	private PostAPIOutputDto postModeltoPostDto(PostModel postModel){
+
+		PostAPIOutputDto posts = new PostAPIOutputDto();
+		posts.setTitle(postModel.getTitle());
+		posts.setContent(postModel.getContent());
+		posts.setDescription(postModel.getDescription());
+
+		posts.setComments(
+			postModel.getComments().stream().map(
+				commentModel -> {
+					return new CommentInputAPIDto(
+						commentModel.getEmail(),
+						commentModel.getName(),
+						commentModel.getBody()
+					);
+				}
+			).collect(Collectors.toSet())
+		);
+
+		return posts;
+
+	}
 }

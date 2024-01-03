@@ -21,8 +21,6 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public CommentModel createComment(CommentInputAPIDto comment, int postId) {
-		// TODO Auto-generated method stub
-		
 		CommentModel commentModel = this.commentDtoToCommentModel(comment, postId);
 		System.out.println("Service -> "+commentModel);
 		return repo.save(commentModel);
@@ -30,20 +28,16 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public CommentModel readComment(int id) {
-		// TODO Auto-generated method stub
 		return repo.findById(id).orElse(null);
 	}
 
 	@Override
 	public List<CommentModel> readCommentByPostId(int postId) {
-		// TODO Auto-generated method stub
 		return repo.findByPostId(postId);
 	}
 
 	@Override
 	public CommentModel updateComment(CommentInputAPIDto comment, int commentId) {
-		// TODO Auto-generated method stub
-		
 		CommentModel commentModel = readComment(commentId);
 		if(comment.getEmail() != null) commentModel.setEmail(comment.getEmail());
 		if(comment.getBody() != null) commentModel.setBody(comment.getBody());
@@ -66,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
 		commentModel.setName(comment.getName());
 		commentModel.setBody(comment.getBody());
 		commentModel.setEmail(comment.getEmail());
-		commentModel.setPost(postService.readPost(postId));
+		commentModel.setPost(postService.readPostModel(postId));
 		
 		return commentModel;
 	}
