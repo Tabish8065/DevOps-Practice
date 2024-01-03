@@ -15,6 +15,8 @@ import com.blogging.Model.CommentModel;
 import com.blogging.Service.CommentService;
 import com.blogging.dto.CommentInputAPIDto;
 
+import jakarta.validation.Valid;
+
 @RequestMapping("post/{postId}/comment/")
 @RestController
 public class CommentManagementController {
@@ -26,7 +28,7 @@ public class CommentManagementController {
     }
 
     @PostMapping("create")
-    public CommentModel createComment(@RequestBody CommentInputAPIDto comment, @PathVariable int postId) {
+    public CommentModel createComment(@Valid @RequestBody CommentInputAPIDto comment, @PathVariable int postId) {
     	
     	System.out.println("Comment : "+comment+", Post Id: "+postId);
     	

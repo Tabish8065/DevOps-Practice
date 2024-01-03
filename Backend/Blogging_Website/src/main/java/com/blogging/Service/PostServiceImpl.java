@@ -11,6 +11,7 @@ import com.blogging.Repository.PostRepo;
 import com.blogging.dto.CommentInputAPIDto;
 import com.blogging.dto.PostAPIOutputDto;
 import com.blogging.dto.PostInputAPIDto;
+import com.blogging.exception.ResourceNotFoundException;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -40,12 +41,16 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public PostAPIOutputDto readPost(int id) {
-		return postModeltoPostDto(repo.findById(id).orElse(null));
+		return postModeltoPostDto(repo.findById(id).orElseThrow(
+			() -> new ResourceNotFoundException("Post", "Post Id", String.valueOf(id))
+		));
 	}
 
 	@Override
 	public PostModel readPostModel(int id){
-		return repo.findById(id).orElse(null);
+		return repo.findById(id).orElseThrow(
+			() -> new ResourceNotFoundException("Post", "Post Id", String.valueOf(id))
+		);
 	} 
 
 	@Override
