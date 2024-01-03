@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.blogging.Model.PostModel;
@@ -46,7 +45,7 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public PostModel readPostModel(int id){
-		return repo.findById(id).orElse(null).;
+		return repo.findById(id).orElse(null);
 	} 
 
 	@Override

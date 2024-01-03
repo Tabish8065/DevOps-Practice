@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.blogging.Model.PostModel;
 import com.blogging.Service.PostService;
 import com.blogging.dto.PostAPIOutputDto;
 import com.blogging.dto.PostInputAPIDto;
