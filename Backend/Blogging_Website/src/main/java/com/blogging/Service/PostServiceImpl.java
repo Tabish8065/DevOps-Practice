@@ -10,6 +10,7 @@ import com.blogging.Model.CategoryModel;
 import com.blogging.Model.PostModel;
 import com.blogging.Repository.CategoryRepo;
 import com.blogging.Repository.PostRepo;
+import com.blogging.dto.CategoryDto;
 import com.blogging.dto.CommentInputAPIDto;
 import com.blogging.dto.PostAPIOutputDto;
 import com.blogging.dto.PostInputAPIDto;
@@ -42,7 +43,7 @@ public class PostServiceImpl implements PostService {
 
 		//Set Category to the post
 		CategoryModel category = categoryRepo.findById(post.getCategoryId()).orElseThrow(
-			() -> new ResourceNotFoundException("Category", "Id", ""+post.getCategoryId());
+			() -> new ResourceNotFoundException("Category", "Id", ""+post.getCategoryId())
 		);
 		postModel.setCategory(category);
 		
@@ -142,11 +143,11 @@ public class PostServiceImpl implements PostService {
 			).collect(Collectors.toSet())
 		);
 
-		CategoryModel category = categoryRepo.findById(post.getCategoryId()).orElseThrow(
-			() -> new ResourceNotFoundException("Category", "Id", ""+post.getCategoryId());
-		);
+		// CategoryModel category = categoryRepo.findById(postModel.getCategory().getId()).orElseThrow(
+		// 	() -> new ResourceNotFoundException("Category", "Id", ""+postModel.getCategory().getId())
+		// );
 
-		posts.setCategory(new CategoryDto(category.getName(), category.getDescription()));
+		posts.setCategory(new CategoryDto(postModel.getCategory().getName(), postModel.getCategory().getDescription()));
 
 		return posts;
 
