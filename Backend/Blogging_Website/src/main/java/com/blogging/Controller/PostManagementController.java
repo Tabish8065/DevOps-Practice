@@ -2,6 +2,7 @@ package com.blogging.Controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,7 @@ import com.blogging.dto.PostInputAPIDto;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("post/")
+@RequestMapping("/api/post")
 public class PostManagementController {
 
     private PostService servcie;
@@ -28,29 +29,39 @@ public class PostManagementController {
         this.servcie = service;
     }
 
-    @PostMapping("create")
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public PostAPIOutputDto createPost(@Valid @RequestBody PostInputAPIDto post) {
     	
     	return servcie.createPost(post);
     }
 
-    @GetMapping("getPost/{id}")
+    @GetMapping("{id}")
     public PostAPIOutputDto readPost(@PathVariable int id) {
         return  servcie.readPost(id);
     }
 
-    @GetMapping("getAll")
+    @GetMapping
     public List<PostAPIOutputDto> readAllPost() {
         return servcie.readAllPost();
     }
 
-    @PutMapping("update/{postId}")
+    @GetMapping("/category/{id}")
+    public List<PostAPIOutputDto> readPostByCategory(@PathVariable int id){
+
+        return servcie.readPostByCategory(id);
+
+    }
+
+    @PutMapping("{postId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public PostAPIOutputDto updatePost(@RequestBody PostInputAPIDto post, @PathVariable int postId) {
     	
         return servcie.updatePost(post,postId);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public PostAPIOutputDto deletePost(@PathVariable int id) {
         return servcie.deletePost(id);
     }

@@ -12,6 +12,7 @@ public interface PostService {
     public PostAPIOutputDto readPost(int id);
     public PostModel readPostModel(int id);
     public List<PostAPIOutputDto> readAllPost();
+    public List<PostAPIOutputDto> readPostByCategory(int id);
     public PostAPIOutputDto updatePost(PostInputAPIDto post, int id);
     public PostAPIOutputDto deletePost(int id);
 

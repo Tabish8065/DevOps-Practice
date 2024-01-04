@@ -2,6 +2,7 @@ package com.blogging.Controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,7 @@ import com.blogging.dto.CommentInputAPIDto;
 
 import jakarta.validation.Valid;
 
-@RequestMapping("post/{postId}/comment/")
+@RequestMapping("/api/post/{postId}/comment/")
 @RestController
 public class CommentManagementController {
 
@@ -27,7 +28,8 @@ public class CommentManagementController {
         this.service = service;
     }
 
-    @PostMapping("create")
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public CommentModel createComment(@Valid @RequestBody CommentInputAPIDto comment, @PathVariable int postId) {
     	
     	System.out.println("Comment : "+comment+", Post Id: "+postId);
@@ -41,17 +43,19 @@ public class CommentManagementController {
         // return "Post id" + postId +", CommentId "+id;
     }
 
-    @GetMapping("")
+    @GetMapping
     public List<CommentModel> readCommentByPost(@PathVariable int postId) {
         return service.readCommentByPostId(postId);
     }
 
     @PutMapping("{commentId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public CommentModel updateComment(@RequestBody CommentInputAPIDto comment, @PathVariable int commentId) {
         return service.updateComment(comment, commentId);
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public CommentModel deleteComment(@PathVariable int id) {
         return service.deleteComment(id);
     }

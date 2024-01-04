@@ -10,6 +10,7 @@ public class PostAPIOutputDto{
     private String title;
     private String description;
     private String content;
+    private CategoryDto category;
 
     private Set<CommentInputAPIDto> comments;
 

@@ -2,7 +2,12 @@ package com.blogging.security;
 
 import java.io.IOException;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
@@ -24,14 +29,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-                
+        //Get token from the request
+        String token = getTokenFormRequest(request);
+
+        //Check if token is not null and valid
+        if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)){
+
+            //Retrive username from token
+            String username = jwtTokenProvider.getUsername(token);
+            
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, userDetails.getAuthorities());
+
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        }
+
+        filterChain.doFilter(request, response);
 
     }
 
     private String getTokenFormRequest(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization");
 
-        if(StringUtils)
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
+            return bearerToken.substring(7);
+        }
+
+        return null;
     }
     
 }

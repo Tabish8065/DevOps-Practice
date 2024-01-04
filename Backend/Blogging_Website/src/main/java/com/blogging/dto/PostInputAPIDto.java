@@ -20,5 +20,7 @@ public class PostInputAPIDto {
 	@NotEmpty
 	@Size(min = 2, message = "Content should be of atleast length 2")
 	private String content;
+
+	private int categoryId;
 	
 }

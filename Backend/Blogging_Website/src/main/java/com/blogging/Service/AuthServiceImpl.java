@@ -18,6 +18,7 @@ import com.blogging.Repository.UserRepo;
 import com.blogging.dto.LoginDto;
 import com.blogging.dto.RegisterDto;
 import com.blogging.exception.BlogAPIException;
+import com.blogging.security.JwtTokenProvider;
 
 @Service
 public class AuthServiceImpl implements AuthService{
@@ -26,13 +27,15 @@ public class AuthServiceImpl implements AuthService{
     private UserRepo userRepo;
     private RoleRepo roleRepo;
     private PasswordEncoder passwordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
 
     public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepo userRepo, RoleRepo roleRepo,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -44,7 +47,9 @@ public class AuthServiceImpl implements AuthService{
 
         SecurityContextHolder.getContext().setAuthentication(authenticate);
 
-        return "User Logged-in successfully";
+        String token = jwtTokenProvider.generateToken(authenticate);
+
+        return token;
 
     }
 
@@ -62,7 +67,7 @@ public class AuthServiceImpl implements AuthService{
         UserModel user = new UserModel();
         user.setName(registerDto.name());
         user.setEmail(registerDto.email());
-        user.setPassword(registerDto.password());
+        user.setPassword(passwordEncoder.encode(registerDto.password()));
         user.setUsername(registerDto.username());
 
         Set<RoleModel> roles = new HashSet<>();
