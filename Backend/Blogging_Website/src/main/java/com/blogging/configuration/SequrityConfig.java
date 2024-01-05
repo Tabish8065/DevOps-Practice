@@ -17,8 +17,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.blogging.security.JwtAuthenticationEntry;
 import com.blogging.security.JwtAuthenticationFilter;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+
 @Configuration
 @EnableMethodSecurity
+@SecurityScheme(
+    name = "Bearer Authentication",
+    type = SecuritySchemeType.HTTP,
+    bearerFormat = "JWT",
+    scheme = "bearer"
+)
 public class SequrityConfig {
 
     // private UserDetailsService userDetailsService;
