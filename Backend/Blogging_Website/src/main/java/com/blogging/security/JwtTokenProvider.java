@@ -23,11 +23,11 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${app.jwt-secret}")
-    private String jwtSecret;
+    //@Value("${app.jwt-secret}")
+    private String jwtSecret = "javainusesecretkksbfanfuorekgroiehagunrkjgbkerjgoaney";
 
-    @Value("${app.expiration-time}")
-    private long expirationTime;
+    //@Value("${app.expiration-time}")
+    private long expirationTime = 6000000;
     
     public String generateToken(Authentication authentication){
         String username = authentication.getName();

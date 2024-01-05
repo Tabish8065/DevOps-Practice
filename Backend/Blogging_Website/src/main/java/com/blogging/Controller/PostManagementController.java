@@ -51,6 +51,7 @@ public class PostManagementController {
     @PreAuthorize("hasRole('ADMIN')")
     public PostAPIOutputDto createPost(@Valid @RequestBody PostInputAPIDto post) {
     	
+    	System.out.println(post);
     	return servcie.createPost(post);
     }
 

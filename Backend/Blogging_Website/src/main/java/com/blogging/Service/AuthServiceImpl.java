@@ -56,22 +56,22 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public String register(RegisterDto registerDto) {
         
-        if(userRepo.existsByUsername(registerDto.username())){
+        if(userRepo.existsByUsername(registerDto.getUsername())){
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "UserName Already exist");
         }
 
-        if(userRepo.existsByEmail(registerDto.email())){
+        if(userRepo.existsByEmail(registerDto.getEmail())){
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Email Already exist");
         }
 
         UserModel user = new UserModel();
-        user.setName(registerDto.name());
-        user.setEmail(registerDto.email());
-        user.setPassword(passwordEncoder.encode(registerDto.password()));
-        user.setUsername(registerDto.username());
+        user.setName(registerDto.getName());
+        user.setEmail(registerDto.getEmail());
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setUsername(registerDto.getUsername());
 
         Set<RoleModel> roles = new HashSet<>();
-        RoleModel usrRole = roleRepo.findByName("ROLE_USER").get();
+        RoleModel usrRole = roleRepo.findByName("ROLE_ADMIN").get();
         roles.add(usrRole);
 
         user.setRoles(roles);

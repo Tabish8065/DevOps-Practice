@@ -3,6 +3,8 @@ package com.blogging.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.blogging.Model.CategoryModel;
 import com.blogging.Repository.CategoryRepo;
 import com.blogging.dto.CategoryDto;
@@ -10,6 +12,7 @@ import com.blogging.exception.ResourceNotFoundException;
 
 import io.micrometer.common.util.StringUtils;
 
+@Service
 public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepo repo;

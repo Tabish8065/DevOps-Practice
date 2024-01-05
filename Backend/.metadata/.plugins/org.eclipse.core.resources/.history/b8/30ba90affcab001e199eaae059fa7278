@@ -1,0 +1,92 @@
+package com.blogging.security;
+
+import java.security.Key;
+import java.util.Date;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+import com.blogging.exception.BlogAPIException;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+
+@Component
+public class JwtTokenProvider {
+
+    //@Value("${app.jwt-secret}")
+    private String jwtSecret = "javainusesecretkey";
+
+    //@Value("${app.expiration-time}")
+    private long expirationTime = 1000l;
+    
+    public String generateToken(Authentication authentication){
+        String username = authentication.getName();
+        
+        Date currDate = new Date();
+        Date expDate = new Date(currDate.getTime() + expirationTime);
+
+        String token = Jwts.builder()
+            .subject(username)
+            .issuedAt(new Date())
+            .expiration(expDate)
+            .signWith(key())
+            .compact();
+
+        return token;
+    }
+
+    private Key key(){
+        return Keys.hmacShaKeyFor(
+            Decoders.BASE64.decode(jwtSecret)
+        );
+    }
+
+    public String getUsername(String token){
+
+        SecretKey secret = (SecretKey)key();
+
+        Claims claims = Jwts.parser()
+            .verifyWith(secret)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+
+        String username = claims.getSubject();
+        return username;
+        
+    }
+
+    public boolean validateToken(String token){
+        try{
+            Jwts.parser()
+                .verifyWith((SecretKey)key())
+                .build()
+                .parse(token);
+
+            return true;
+        }
+        catch(MalformedJwtException e){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Invalid Jwt Token");
+        }
+        catch(ExpiredJwtException e){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Expired Jwt Token");
+        }
+        catch(UnsupportedJwtException e){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Unsupported JWT token");
+        }
+        catch(IllegalArgumentException e){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Jwt claims string is empty");
+        }
+    }
+
+}

@@ -22,52 +22,43 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 @Configuration
 @EnableMethodSecurity
-@SecurityScheme(
-    name = "Bearer Authentication",
-    type = SecuritySchemeType.HTTP,
-    bearerFormat = "JWT",
-    scheme = "bearer"
-)
+@SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
 public class SequrityConfig {
 
-    // private UserDetailsService userDetailsService;
-    private JwtAuthenticationEntry jwtAuthenticationEntry;
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-    
-    public SequrityConfig( JwtAuthenticationEntry jwtAuthenticationEntry
-                            ,JwtAuthenticationFilter jwtAuthenticationFilter) {//UserDetailsService userDetailsService,
-        // this.userDetailsService = userDetailsService;
-        this.jwtAuthenticationEntry = jwtAuthenticationEntry;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
+	// private UserDetailsService userDetailsService;
+	private JwtAuthenticationEntry jwtAuthenticationEntry;
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Bean
-    public static PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+	public SequrityConfig(JwtAuthenticationEntry jwtAuthenticationEntry,
+			JwtAuthenticationFilter jwtAuthenticationFilter) {// UserDetailsService userDetailsService,
+		// this.userDetailsService = userDetailsService;
+		this.jwtAuthenticationEntry = jwtAuthenticationEntry;
+		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+	}
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
-        return configuration.getAuthenticationManager();
-    }
+	@Bean
+	public static PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+		return configuration.getAuthenticationManager();
+	}
 
-        http.csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authorize -> 
-                authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                .requestMatchers("/api/auth/**").permitAll()
-                .anyRequest().authenticated())
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint(jwtAuthenticationEntry)
-            ).sessionManagement(session -> 
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            );
+	@Bean
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+		http.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(authorize -> authorize.requestMatchers(HttpMethod.GET).permitAll()
+						.requestMatchers("/api/auth/**").permitAll().requestMatchers("/swagger-ui/**").permitAll()
+						.requestMatchers("/v3/api-docs/**").permitAll().anyRequest().authenticated())
+				.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntry))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        return http.build();
-    }
+		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
+	}
 
 }

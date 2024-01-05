@@ -38,6 +38,7 @@ public class AuthController {
     @PostMapping("/login")
     public JwtAuthResponse login(@RequestBody LoginDto loginDto){
         
+    	System.out.println("Login dto " + loginDto);
         String token = authService.login(loginDto);
 
         JwtAuthResponse resp = new JwtAuthResponse();
@@ -57,6 +58,7 @@ public class AuthController {
     @PostMapping("/register")
     public String postMethodName(@RequestBody RegisterDto registerDto) {
         
+    	System.out.println("Resgister DTO : " + registerDto);
         return authService.register(registerDto);
 
     }
