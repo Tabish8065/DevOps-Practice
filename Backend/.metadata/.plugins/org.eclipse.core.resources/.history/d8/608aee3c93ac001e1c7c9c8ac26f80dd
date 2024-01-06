@@ -1,0 +1,83 @@
+package com.blogging.Service;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.blogging.Model.RoleModel;
+import com.blogging.Model.UserModel;
+import com.blogging.Repository.RoleRepo;
+import com.blogging.Repository.UserRepo;
+import com.blogging.dto.LoginDto;
+import com.blogging.dto.RegisterDto;
+import com.blogging.exception.BlogAPIException;
+import com.blogging.security.JwtTokenProvider;
+
+@Service
+public class AuthServiceImpl implements AuthService{
+
+    private AuthenticationManager authenticationManager;
+    private UserRepo userRepo;
+    private RoleRepo roleRepo;
+    private PasswordEncoder passwordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
+
+    public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepo userRepo, RoleRepo roleRepo,
+            PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+        this.authenticationManager = authenticationManager;
+        this.userRepo = userRepo;
+        this.roleRepo = roleRepo;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @Override
+    public String login(LoginDto loginDto) {
+
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+            loginDto.usernameOrEmail(), loginDto.password()
+        ));
+
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+
+        String token = jwtTokenProvider.generateToken(authenticate);
+
+        return token;
+
+    }
+
+    @Override
+    public String register(RegisterDto registerDto) {
+        
+        if(userRepo.existsByUsername(registerDto.getUsername())){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "UserName Already exist");
+        }
+
+        if(userRepo.existsByEmail(registerDto.getEmail())){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Email Already exist");
+        }
+
+        UserModel user = new UserModel();
+        user.setName(registerDto.getName());
+        user.setEmail(registerDto.getEmail());
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setUsername(registerDto.getUsername());
+
+        Set<RoleModel> roles = new HashSet<>();
+        RoleModel usrRole = roleRepo.findByName("ROLE_ADMIN").get();
+        roles.add(usrRole);
+
+        user.setRoles(roles);
+        userRepo.save(user);
+
+        return "User has been successfully added";
+    }
+    
+}
